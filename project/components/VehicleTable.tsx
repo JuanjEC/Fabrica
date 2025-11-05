@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit, Trash2, MoreHorizontal } from 'lucide-react';
+import { Edit, Trash2, MoreHorizontal, ToggleLeft, ToggleRight } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -32,10 +32,11 @@ interface VehicleTableProps {
   vehicles: Vehicle[];
   onEdit: (vehicle: Vehicle) => void;
   onDelete: (vehicle: Vehicle) => void;
+  onToggleStatus?: (vehicle: Vehicle) => void;
   isLoading?: boolean;
 }
 
-export function VehicleTable({ vehicles, onEdit, onDelete, isLoading = false }: VehicleTableProps) {
+export function VehicleTable({ vehicles, onEdit, onDelete, onToggleStatus, isLoading = false }: VehicleTableProps) {
   const { user } = useAuth();
   const canEdit = user?.role === 'admin';
 
@@ -127,6 +128,48 @@ export function VehicleTable({ vehicles, onEdit, onDelete, isLoading = false }: 
                   <div className="flex justify-end space-x-2">
                     {/* Desktop actions */}
                     <div className="hidden sm:flex space-x-2">
+                      {onToggleStatus && (
+                        <RoleGuard 
+                          allowedRoles={['admin']}
+                          fallback={
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled
+                                    className="bg-gray-800 border-gray-700 text-gray-400"
+                                  >
+                                    {vehicle.status === 'active' ? (
+                                      <ToggleRight className="h-4 w-4" />
+                                    ) : (
+                                      <ToggleLeft className="h-4 w-4" />
+                                    )}
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Permiso requerido</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          }
+                        >
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onToggleStatus(vehicle)}
+                            className="bg-gray-800 border-gray-700 text-yellow-400 hover:bg-gray-700 hover:text-yellow-300"
+                          >
+                            {vehicle.status === 'active' ? (
+                              <ToggleRight className="h-4 w-4" />
+                            ) : (
+                              <ToggleLeft className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </RoleGuard>
+                      )}
+                      
                       <RoleGuard 
                         allowedRoles={['admin']}
                         fallback={
@@ -209,6 +252,37 @@ export function VehicleTable({ vehicles, onEdit, onDelete, isLoading = false }: 
                           align="end" 
                           className="bg-gray-800 border-gray-700"
                         >
+                          {onToggleStatus && (
+                            <RoleGuard 
+                              allowedRoles={['admin']}
+                              fallback={
+                                <DropdownMenuItem 
+                                  disabled
+                                  className="text-gray-500 focus:text-gray-500"
+                                >
+                                  {vehicle.status === 'active' ? (
+                                    <ToggleRight className="mr-2 h-4 w-4" />
+                                  ) : (
+                                    <ToggleLeft className="mr-2 h-4 w-4" />
+                                  )}
+                                  {vehicle.status === 'active' ? 'Desactivar' : 'Activar'}
+                                </DropdownMenuItem>
+                              }
+                            >
+                              <DropdownMenuItem 
+                                onClick={() => onToggleStatus(vehicle)}
+                                className="text-yellow-400 focus:text-yellow-300 focus:bg-gray-700"
+                              >
+                                {vehicle.status === 'active' ? (
+                                  <ToggleRight className="mr-2 h-4 w-4" />
+                                ) : (
+                                  <ToggleLeft className="mr-2 h-4 w-4" />
+                                )}
+                                {vehicle.status === 'active' ? 'Desactivar' : 'Activar'}
+                              </DropdownMenuItem>
+                            </RoleGuard>
+                          )}
+                          
                           <RoleGuard 
                             allowedRoles={['admin']}
                             fallback={

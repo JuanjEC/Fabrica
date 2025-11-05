@@ -36,7 +36,7 @@ export default function FleetPage() {
   const [error, setError] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -62,7 +62,7 @@ export default function FleetPage() {
   }, []);
 
   const handleCreateVehicle = () => {
-    setSelectedVehicle(null);
+    setSelectedVehicle(undefined);
     setIsFormOpen(true);
   };
 
@@ -115,6 +115,17 @@ export default function FleetPage() {
       toast.error(message);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleToggleStatus = async (vehicle: Vehicle) => {
+    try {
+      const updated = await vehicleApi.toggleVehicleStatus(vehicle.id);
+      setVehicles(prev => prev.map(v => v.id === vehicle.id ? updated : v));
+      toast.success(`Vehículo ${updated.status === 'active' ? 'activado' : 'desactivado'} correctamente`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error al cambiar estado del vehículo';
+      toast.error(message);
     }
   };
 
@@ -211,6 +222,7 @@ export default function FleetPage() {
                     vehicles={vehicles}
                     onEdit={handleEditVehicle}
                     onDelete={handleDeleteVehicle}
+                    onToggleStatus={handleToggleStatus}
                     isLoading={isLoading}
                   />
                 )}

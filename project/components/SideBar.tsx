@@ -12,6 +12,8 @@ import {
   Settings,
   LogOut,
   X,
+  Radio,
+  History,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth/context';
 
@@ -22,6 +24,8 @@ interface SideBarProps {
 
 const navigation = [
   { name: 'Gestión de Flota', href: '/fleet', icon: Truck, roles: ['admin', 'operator'] },
+  { name: 'Monitoreo en tiempo real', href: '/monitoring', icon: Radio, roles: ['admin', 'operator'] },
+  { name: 'Historial de ubicaciones', href: '/history', icon: History, roles: ['admin', 'operator'] },
   { name: 'Alertas', href: '/alerts', icon: AlertTriangle, roles: ['admin', 'operator'] },
   { name: 'Reportes', href: '/reports', icon: BarChart3, roles: ['admin'], disabled: true },
   { name: 'Configuración', href: '/settings', icon: Settings, roles: ['admin'], disabled: true },

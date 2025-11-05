@@ -115,3 +115,29 @@ export async function deleteVehicle(id: string): Promise<void> {
   
   MOCK_VEHICLES.splice(index, 1);
 }
+
+export async function getVehicleById(id: string): Promise<Vehicle | null> {
+  await delay(Math.random() * 200 + 100);
+
+  const vehicle = MOCK_VEHICLES.find(v => v.id === id) || null;
+  return vehicle ? { ...vehicle } : null;
+}
+
+export async function findVehicleByPlate(plate: string): Promise<Vehicle | null> {
+  await delay(Math.random() * 200 + 100);
+
+  const vehicle = MOCK_VEHICLES.find(v => v.plate.toLowerCase() === plate.toLowerCase()) || null;
+  return vehicle ? { ...vehicle } : null;
+}
+
+export async function toggleVehicleStatus(id: string): Promise<Vehicle> {
+  await delay(Math.random() * 300 + 200);
+
+  const index = MOCK_VEHICLES.findIndex(v => v.id === id);
+  if (index === -1) {
+    throw new Error('Vehicle not found');
+  }
+
+  MOCK_VEHICLES[index].status = MOCK_VEHICLES[index].status === 'active' ? 'inactive' : 'active';
+  return { ...MOCK_VEHICLES[index] };
+}
